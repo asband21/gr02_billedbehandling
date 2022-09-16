@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 cam = cv2.VideoCapture(0)
-Image =cv2.imread("letter.png",cv2.IMREAD_GRAYSCALE)
+Image =cv2.imread("tinypic.png",cv2.IMREAD_GRAYSCALE)
 output =np.zeros((Image.shape[0],Image.shape[1],3),dtype=Image.dtype)
 
 def RGB_CONV(Image):

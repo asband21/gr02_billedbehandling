@@ -16,7 +16,12 @@ def RGB_CONV(Image):
 
                                 blue_array[row2 - row, pixel - value] = output[row2 - row, pixel - value, 0]
                                 # print(f"Green array: {green_array} in {[ pixel-value,row2-row]}")
-                        print(f" blue{blue_array}")
+                                if blue_array[row2-row, pixel-value] != 0:
+                                    a=1
+                                    a+= a+1
+
+                                    print(f"blue count is {a}")
+                            print(f" blue{blue_array}")
                 else:
                     output[row, value, 1] = Image[row, value]
                     green_array = np.zeros((3, 3))
@@ -28,15 +33,18 @@ def RGB_CONV(Image):
                         print(f" green{green_array}")
             else:
                 if (value % 2) == 0:
-                    output[row, value, 1] = Image[row,value]
+                    output[row, value, 1] = Image[row, value]
                     green_array = np.zeros((3, 3))
                     if output[row, value, 1] != 0:
                         for row2 in range(row, row + 3):
                             for pixel in range(value, value + 3):
                                 green_array[row2 - row, pixel - value] = output[row2 - row, pixel - value, 1]
-                                # print(f"Green array: {green_array} in {[ pixel-value,row2-row]}")
-                        print(f" green{green_array}")
-
+                                #print(f"Green array: {green_array} in {[ pixel-value,row2-row]}")
+                                if green_array[row2-row, pixel-value]!= 0:
+                                    a = 0
+                                    a += a + 1
+                                    print(f"green count is {a}")
+                                print(f" green{green_array}")
                 else:
                     output[row, value, 2] = Image[row, value]
                     red_array = np.zeros((3, 3))

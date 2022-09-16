@@ -1,11 +1,16 @@
 import cv2
 import numpy as np
-Image =cv2.imread("tinypic.png",cv2.IMREAD_GRAYSCALE)
+
+#Image = cv2.imread("letter.png",cv2.IMREAD_GRAYSCALE)
+Image = cv2.imread("tinypic.png",cv2.IMREAD_GRAYSCALE)
 output =np.zeros((Image.shape[0],Image.shape[1],3),dtype=Image.dtype)
+Image =np.append(Image, np.zeros((Image.shape[0],3)),axis=1)
+Image =np.append(Image, np.zeros((3,Image.shape[1])),axis=0)
+print(f"{Image.shape[0]} {Image.shape[1]}")
 #output = np.add(output,255)
 def RGB_CONV(Image):
-    for row in range(Image.shape[0]):
-        for value in range(Image.shape[1]):
+    for row in range(Image.shape[0]-3):
+        for value in range(Image.shape[1]-3):
             if (row % 2) == 0:
                 if (value % 2) == 0:
                     output[row, value, 0] = Image[row, value]
@@ -21,7 +26,8 @@ def RGB_CONV(Image):
                         for pixel in range(value, value + 3):
                             print(f"x{row}y{value}")
                             if True: #outpt[row, value, 1] != 0:
-                                green_array[row2-row, pixel-value] = output[row2, pixel, 1]
+                                print(f"green_array[{row2}-{row}, {pixel}-{value}] = output[{row2}, {pixel}, 1]")
+                                green_array[row2-row, pixel-value] = Image[row2, pixel]
                                 print(output[row, value, 1])
                                 print(f"Green array{green_array} in {[row2, pixel]}")
 

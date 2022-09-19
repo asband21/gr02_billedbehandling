@@ -9,16 +9,14 @@ def RGB_CONV(Image):
         for value in range(Image.shape[1]):
             if (row%2)==0:
                 if (value%2)==0:
-                    output[row,value,2] = Image[row,value]
+                    output[row,value,0] = Image[row,value]
                 else:
                     output[row,value,1] = Image[row,value]
             else:
                 if (value%2)==0:
                     output[row,value,1] = Image[row,value]
                 else:
-                    output[row,value,0] = Image[row,value]
-
-
+                    output[row,value,2] = Image[row,value]
 def Show_Case(Image,output,cam):
     cv2.imshow("Input",Image)
     cv2.imshow("Output",output)
@@ -28,6 +26,7 @@ def Show_Case(Image,output,cam):
         lower = np.array([0, 0, 0], np.uint8)
         upper = np.array([200, 255, 100], np.uint8)
         mask = cv2.inRange(hsv, lower, upper)
+        cv2.imshow("REAL RAM", pix)
         cv2.imshow("CAM_COLOR", hsv)
         cv2.imshow("CAM_GRAY", mask)
         k = cv2.waitKey(5) & 0xFF

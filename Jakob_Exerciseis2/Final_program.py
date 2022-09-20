@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
-Image = cv2.imread("letter.png ", cv2.IMREAD_GRAYSCALE)
-Image2 = cv2.imread("letter.png ")
+Image = cv2.imread("letter.png", cv2.IMREAD_GRAYSCALE)
+Image2 = cv2.imread("letter.png")
 output = np.zeros((Image.shape[0], Image.shape[1], 3), dtype=Image.dtype)
 #output = np.add(output,255)
 g = 0

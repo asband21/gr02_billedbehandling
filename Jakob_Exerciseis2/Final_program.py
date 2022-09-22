@@ -1,8 +1,13 @@
 import cv2
 import numpy as np
+<<<<<<< HEAD
 picture ="mounitan.png"
 Image = cv2.imread(picture, cv2.IMREAD_GRAYSCALE)
 Image2 = cv2.imread(picture)
+=======
+Image = cv2.imread("letter.png", cv2.IMREAD_GRAYSCALE)
+Image2 = cv2.imread("letter.png")
+>>>>>>> 658fe01055ec7b499013ada7318ce2ba77fccac4
 output = np.zeros((Image.shape[0], Image.shape[1], 3), dtype=Image.dtype)
 red_picture = np.zeros((Image.shape[0], Image.shape[1], 3), dtype=Image.dtype)
 blue_picture = np.zeros((Image.shape[0], Image.shape[1], 3), dtype=Image.dtype)

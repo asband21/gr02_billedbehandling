@@ -56,7 +56,6 @@ def brak_type(img):
         print("sump")
         return 200
 
-
     return 10
 
 def antal_kroner(img):

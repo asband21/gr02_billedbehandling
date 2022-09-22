@@ -1,14 +1,14 @@
 import cv2
 import numpy as np
 cam = cv2.VideoCapture(0)
-Image =cv2.imread("tinypic.png",cv2.IMREAD_GRAYSCALE)
-output =np.zeros((Image.shape[0],Image.shape[1],3),dtype=Image.dtype)
+Image =cv2.imread("tinypic.png", cv2.IMREAD_GRAYSCALE)
+output =np.zeros((Image.shape[0], Image.shape[1], 3), dtype=Image.dtype)
 
 def RGB_CONV(Image):
     for row in range(Image.shape[0]):
         for value in range(Image.shape[1]):
             if (row%2)==0:
-                if (value%2)==0:
+                if (value % 2) == 0:
                     output[row,value,0] = Image[row,value]
                 else:
                     output[row,value,1] = Image[row,value]

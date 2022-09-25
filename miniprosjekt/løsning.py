@@ -59,10 +59,35 @@ def brak_type(img):
     return 10
 
 def antal_kroner(img):
-    res = cv.matchTemplate(img,template,cv.TM_CCOEFF)
-    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
-    top_left = min_loc
-    cv.rectangle(img,top_left, bottom_right, 255, 2)
+    #kroner = [0,0,0,0,0]
+    ud = [0,0,0,0,0]
+    teller = 0
+    cv.imshow("felt",img)
+    kroner = cv.imread("./king_domino_dataset/krone_master.png")
+    for i in range(4):
+        ud[i] = cv.matchTemplate(img,kroner,cv.TM_CCOEFF_NORMED)
+        kroner = cv.rotate(kroner,cv.ROTATE_90_CLOCKWISE)
+        ud[i] = cv.inRange(ud[i], 0.6, 1)
+        if ud[i].sum() > 0:
+            cv.imshow(str(i),ud[i])
+            print(str(ud[i].sum()))
+            cv.waitKey(0)
+    '''
+    for i in range(5):
+        kroner[i] = cv.imread("./king_domino_dataset/krone_"+str(i) +".png")
+        ud[i] = cv.matchTemplate(img,kroner[i],cv.TM_CCOEFF_NORMED)
+        cv.imshow(str(i),ud[i])
+        ud[i] = cv.inRange(ud[i], 0.5, 1)
+        cv.imshow(str(i)+"_maske",ud[i])
+        print(str(ud[i].sum())+" sum:"+str(i))
+        cv.imshow("tjel:"+str(i),kroner[i])
+        if ud[i].sum() > 0:
+            cv.waitKey(0)
+    '''
+    #res = cv.matchTemplate(img,template,cv.TM_CCOEFF)
+    #min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
+    #top_left = min_loc
+    #cv.rectangle(img,top_left, bottom_right, 255, 2)
     #print(3)
     return 3
 

@@ -1,0 +1,3 @@
+/home/klyx/git/p3/gr02_billedbehandling/lek_4_neighborhood_processing/CMakeFiles/asbjørn_cpp.dir
+/home/klyx/git/p3/gr02_billedbehandling/lek_4_neighborhood_processing/CMakeFiles/edit_cache.dir
+/home/klyx/git/p3/gr02_billedbehandling/lek_4_neighborhood_processing/CMakeFiles/rebuild_cache.dir

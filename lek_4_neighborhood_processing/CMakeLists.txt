@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project( asbjørn_cpp )
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+add_executable( asbjørn_cpp asbjørn_cpp.cpp )
+target_link_libraries( asbjørn_cpp ${OpenCV_LIBS} )

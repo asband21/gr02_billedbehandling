@@ -69,9 +69,10 @@ def antal_kroner(img):
         kroner = cv.rotate(kroner,cv.ROTATE_90_CLOCKWISE)
         ud[i] = cv.inRange(ud[i], 0.6, 1)
         if ud[i].sum() > 0:
-            cv.imshow(str(i),ud[i])
-            print(str(ud[i].sum()))
-            cv.waitKey(0)
+                print(str(ud[i].sum()))
+        cv.imshow(str(i),ud[i])
+        cv.waitKey(0)
+        cv.imread
     '''
     for i in range(5):
         kroner[i] = cv.imread("./king_domino_dataset/krone_"+str(i) +".png")

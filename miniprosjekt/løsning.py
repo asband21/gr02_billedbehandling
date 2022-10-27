@@ -16,35 +16,35 @@ def brak_type(img):
     if 0.4 < tal:
         #cv.imshow("mark"+str(tal),img)
         #print("vand")
-        return 25
+        return 1
 
     # vand
     tal = maske_prosent(hsv, np.array([100,90,90]) ,np.array([140,255,255]))
     if 0.4 < tal:
         #cv.imshow("vand"+str(tal),img)
         #print("vand")
-        return 120
+        return 2
 
     # eng
     tal = maske_prosent(hsv, np.array([35,90,90]) ,np.array([45,255,255]))
     if 0.2 < tal:
         #cv.imshow("eng"+str(tal),img)
         #print("eng")
-        return 42
+        return 3
 
     # skov
     tal = maske_prosent(hsv, np.array([35,70,20]) ,np.array([65,255,90]))
     if 0.4 < tal:
         #cv.imshow("skov"+str(tal),img)
         #print("skov")
-        return 42
+        return 4
 
     # mine
     tal = maske_prosent(hsv, np.array([0,0,0]) ,np.array([255,120,35]))
     if 0.2 < tal:
         #cv.imshow("mine"+str(tal),img)
         #print("mine")
-        return 200
+        return 5
 
     #sump
     tal = maske_prosent(hsv, np.array([15,0,0]) ,np.array([30,250,250]))
@@ -54,7 +54,7 @@ def brak_type(img):
     if 0.65 < tal and kant > 200000:
         #print(kant.sum())
         print("sump")
-        return 200
+        return 6
 
     return 10
 
@@ -71,7 +71,7 @@ def antal_kroner(img):
         if ud[i].sum() > 0:
                 print(str(ud[i].sum()))
         cv.imshow(str(i),ud[i])
-        cv.waitKey(0)
+        #cv.waitKey(0)
         cv.imread
     '''
     for i in range(5):
@@ -100,8 +100,60 @@ def poing(img):
             li_img = img[(i*100):(i*100+100),(j*100):(j*100+100)]
             m_img[i,j,0] = brak_type(li_img)
             m_img[i,j,1] = antal_kroner(li_img)
+    #g = berging_poing(m_img)
+    #print(g)
+    print("------------")
+    print(f"---ping:{berging_poing(m_img)}")
     m_img = cv.cvtColor(m_img, cv.COLOR_HSV2BGR)
     cv.imshow('lille',m_img)
+
+
+class cl_poing:
+    def __init__(self, img, x, y):
+        self.img = img
+        self.x = x
+        self.y = y
+        self.col = self.img[x,y,0]
+        self.fel = 0
+        self.kor = 0 
+
+    def berging_poing(self):
+        if(self.img[self.x,self.y,2] == 0):
+            return 0
+        if(self.col == 0):
+            return 0
+        #print(f"x:{self.x} y:{self.y}")
+        #print("{self.img[self.x,self.y,0]} != {self.col}:")
+        #print(f"{self.img[self.x,self.y,0]} != {self.col}:")
+        if(self.img[self.x,self.y,0] != self.col):
+            return 0
+        tutal = 0
+        self.img[self.x,self.y,0] = 0
+        self.fel = self.fel + 1
+        self.kor = self.kor + self.img[self.x,self.y,1]
+        li = [[1,0],[-1,0],[0,-1],[0,1]]
+        for i in li:
+            if -1 < self.x+i[0] < 5 and -1 < self.y+i[1] < 5:
+                tmp_x = self.x
+                tmp_y = self.y
+                self.x = self.x + i[0] 
+                self.y = self.y + i[1] 
+                self.berging_poing()
+                self.x = tmp_x
+                self.y = tmp_y 
+
+        return self.fel*self.kor
+
+def berging_poing(img):
+    tutal = 0
+    for i in range(5):
+        for j in range(5):
+            tmp = cl_poing(img,i,j)
+            t = tmp.berging_poing()
+            tutal = tutal + t
+            if(t != 0):
+                print(f"fellt:{tmp.fel} kroner:{tmp.kor}")
+    return tutal
 
 def sum_xy(array, start, stop, x_len, y_len):
     tal = [0,0,0]

@@ -74,8 +74,9 @@ while(1):
     #skov
     lower_skov = np.array([35,70,20])
     upper_skov = np.array([65,255,90])
-    mask = cv.inRange(hsv, lower_skov, upper_skov)
-    res_skov = cv.bitwise_and(img,img, mask= mask)
+    mask_skov = cv.inRange(hsv, lower_skov, upper_skov)
+    cv.imshow('skov_mask',mask_skov)
+    res_skov = cv.bitwise_and(img,img, mask= mask_skov)
     cv.imshow('skov',res_skov)
     
     #mine

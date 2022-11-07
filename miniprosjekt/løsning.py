@@ -34,7 +34,7 @@ def brak_type(img):
 
     # skov
     tal = maske_prosent(hsv, np.array([35,70,20]) ,np.array([65,255,90]))
-    if 0.4 < tal:
+    if 0.2 < tal:
         #cv.imshow("skov"+str(tal),img)
         #print("skov")
         return 4
@@ -49,18 +49,20 @@ def brak_type(img):
     #sump
     tal = maske_prosent(hsv, np.array([15,0,0]) ,np.array([30,250,250]))
     kant = cv.Canny(hsv[:,:,2],60,120).sum()
-    print(tal)
+    #print(tal)
     #cv.imshow(str(kant) + " sump "+str(tal),img)
     if 0.65 < tal and kant > 200000:
         #print(kant.sum())
-        print("sump")
+        #print("sump")
         return 6
 
-    return 10
+    return 7
 
 def antal_kroner(img):
     #kroner = [0,0,0,0,0]
     ud = [0,0,0,0,0]
+    index = 0;
+    max_sum = 0;
     teller = 0
     cv.imshow("felt",img)
     kroner = cv.imread("./king_domino_dataset/krone_master.png")
@@ -68,33 +70,26 @@ def antal_kroner(img):
         ud[i] = cv.matchTemplate(img,kroner,cv.TM_CCOEFF_NORMED)
         kroner = cv.rotate(kroner,cv.ROTATE_90_CLOCKWISE)
         ud[i] = cv.inRange(ud[i], 0.6, 1)
-        if ud[i].sum() > 0:
-                print(str(ud[i].sum()))
+        #if ud[i].sum() > 0:
+        #        print(str(ud[i].sum()))
+        if ud[i].sum() > max_sum:
+            max_sum = ud[i].sum()
+            index = i
         cv.imshow(str(i),ud[i])
-        #cv.waitKey(0)
         cv.imread
-    '''
-    for i in range(5):
-        kroner[i] = cv.imread("./king_domino_dataset/krone_"+str(i) +".png")
-        ud[i] = cv.matchTemplate(img,kroner[i],cv.TM_CCOEFF_NORMED)
-        cv.imshow(str(i),ud[i])
-        ud[i] = cv.inRange(ud[i], 0.5, 1)
-        cv.imshow(str(i)+"_maske",ud[i])
-        print(str(ud[i].sum())+" sum:"+str(i))
-        cv.imshow("tjel:"+str(i),kroner[i])
-        if ud[i].sum() > 0:
-            cv.waitKey(0)
-    '''
-    #res = cv.matchTemplate(img,template,cv.TM_CCOEFF)
-    #min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
-    #top_left = min_loc
-    #cv.rectangle(img,top_left, bottom_right, 255, 2)
-    #print(3)
-    return 3
+    if(max_sum > 0):
+        #print(index)
+        ret , markers = cv.connectedComponents(ud[index])
+        #print(f"kroner{ret-1}")
+        #for pl in markers:
+        cv.waitKey(0)
+        return ret-1;
+    return 0
 
 def poing(img):
     print("poing")
     m_img = np.full((5, 5, 3), (255,255,255), dtype=np.uint8)
+    ud = np.full((5, 5, 3), (255,255,120), dtype=np.uint8)
     for i in range(5):
         for j in range(5):
             li_img = img[(i*100):(i*100+100),(j*100):(j*100+100)]
@@ -103,9 +98,13 @@ def poing(img):
     #g = berging_poing(m_img)
     #print(g)
     print("------------")
+    for i in range(5):
+        for j in range(5):
+            ud[i,j,0] = m_img[i,j,0]*10
     print(f"---ping:{berging_poing(m_img)}")
     m_img = cv.cvtColor(m_img, cv.COLOR_HSV2BGR)
-    cv.imshow('lille',m_img)
+    ud = cv.cvtColor(ud, cv.COLOR_HSV2BGR)
+    cv.imshow('lille',ud)
 
 
 class cl_poing:
@@ -166,7 +165,7 @@ def sum_xy(array, start, stop, x_len, y_len):
         tal[i] = tal[i]/(x_len*y_len)
     return tal
 
-teller = 0;
+teller = np.random.randint(0,high=74);
 while(1):
 
     sti = "king_domino_dataset/cropped_and_perspective_corrected_boards/"

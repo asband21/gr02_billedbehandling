@@ -78,6 +78,9 @@ while(1):
     cv.imshow('skov_mask',mask_skov)
     res_skov = cv.bitwise_and(img,img, mask= mask_skov)
     cv.imshow('skov',res_skov)
+    addet_mask = cv.add(mask,mask_skov)
+    cv.imshow('mask',mask)
+    cv.imshow('to mask',addet_mask)
     
     #mine
     lower_mine = np.array([0,0,0])

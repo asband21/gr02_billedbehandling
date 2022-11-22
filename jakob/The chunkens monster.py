@@ -5,12 +5,13 @@ crown = cv2.imread("krone_master.png")
 mill = cv2.imread("molle1.png")
 where_crown = np.copy(input)
 where_crown_array = np.zeros([5, 5])
+what_crown_land = [["blank","blank","blank","blank","blank"],["blank","blank","blank","blank","blank"],["blank","blank","blank","blank","blank"],["blank","blank","blank","blank","blank"],["blank","blank","blank","blank","blank"]]
 
 def average(img, lower, upper,i):
     name = ("water", "farm", "grass", "forest", "cave", "swamp")
     threshold = cv2.inRange(img, lower, upper)
     ##cv.imshow("threshold", threshold)
-    cv2.imshow("threshold " + name[i], threshold) #debuging
+    # cv2.imshow("threshold " + name[i], threshold) #debuging
     return threshold.sum()/2560000
     ##return threshold.sum()/64000000
 
@@ -22,7 +23,7 @@ def environment(image):
     #avg = average(hsvImage, np.array([140, 220, 0]), np.array([160, 255, 255]));
     print("water ="+str(avg))
     if 0.3 < avg:
-        print("nice")
+        return "water"
 
 #farm = (h=[30,40], s[220,255], v[170,210])
     avg = average(hsvImage, np.array([30, 220, 160 ]), np.array([40, 255, 210]),1)
@@ -30,7 +31,7 @@ def environment(image):
     #print(avg)
     print("farm ="+str(avg))
     if 0.35 < avg:
-        print("nice")
+        return "farm"
 
 #grass = (h=[55,75], s[190,255], v[150,215])
     avg = average(hsvImage, np.array([40, 190, 100]), np.array([75, 255, 215]),2)
@@ -38,7 +39,7 @@ def environment(image):
     #print(avg)
     print("grass ="+str(avg))
     if 0.15 < avg:
-        print("nice")
+        return "grass"
 
 #forest = (h=[62,90], s[118,255], v[37,80])
     avg = average(hsvImage, np.array([62, 90,37]), np.array([90, 255, 80]),3)
@@ -46,7 +47,7 @@ def environment(image):
     #print(avg)
     print("forest ="+str(avg))
     if 0.10 < avg:
-        print("nice")
+        return "forest"
 
 #cave = (h[10,25], s[0,55], v[30,75])
     avg = average(hsvImage, np.array([150, 0, 0]), np.array([255, 124, 78]),4)
@@ -54,7 +55,7 @@ def environment(image):
     #print(avg)
     print("cave ="+str(avg))
     if 0.10 < avg:
-        print("nice")
+        return "cave"
 
 #swamp = (h[14,39], s[90,189], v[70,165])
     avg = average(hsvImage, np.array([14, 0, 70]), np.array([39, 189, 165]),5)
@@ -62,7 +63,7 @@ def environment(image):
     #print(avg)
     print("swamp ="+str(avg))
     if 0.30 < avg:
-        print("nice")
+        return "swamp"
 
     print("..........") # only for debugging in the terminel
 
@@ -93,10 +94,10 @@ def crop (image,temp_crown):
                 ret, marks = cv2.connectedComponents(g)
                 ret = ret-1
                 if ret > 0:
-                    environment(crop)
-                    cv2.imshow("crop", crop)
-                    cv2.waitKey(0)
+                    #cv2.imshow("crop", crop)
+                    #cv2.waitKey(0)
                     where_crown_array[i, j] = ret
+                    what_crown_land[i][j] = environment(crop)
 
     return where_crown_array
 
@@ -108,6 +109,8 @@ crop(input,crown)
 crop(input,mill)
 
 print(where_crown_array)
+for i in what_crown_land:
+    print(i)
 cv2.imshow("input",input)
 cv2.waitKey(0)
 #cv2.imshow("input", input)

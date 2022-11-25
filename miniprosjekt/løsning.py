@@ -2,6 +2,8 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
 import pdb
+
+deb = False
 def maske_prosent(hsv, neder, øver):
     mask = cv.inRange(hsv, neder, øver)
     #cv.imshow("mask",mask)
@@ -59,35 +61,30 @@ def brak_type(img):
     return 7
 
 def antal_kroner(img):
-    #kroner = [0,0,0,0,0]
     ud = [0,0,0,0,0]
     index = 0;
     max_sum = 0;
     teller = 0
-    cv.imshow("felt",img)
+    if deb:
+        cv.imshow("felt",img)
     kroner = cv.imread("./king_domino_dataset/krone_master.png")
     for i in range(4):
         ud[i] = cv.matchTemplate(img,kroner,cv.TM_CCOEFF_NORMED)
         kroner = cv.rotate(kroner,cv.ROTATE_90_CLOCKWISE)
         ud[i] = cv.inRange(ud[i], 0.6, 1)
-        #if ud[i].sum() > 0:
-        #        print(str(ud[i].sum()))
         if ud[i].sum() > max_sum:
             max_sum = ud[i].sum()
             index = i
-        cv.imshow(str(i),ud[i])
-        cv.imread
+        if deb:
+            cv.imshow(str(i),ud[i])
     if(max_sum > 0):
-        #print(index)
         ret , markers = cv.connectedComponents(ud[index])
-        #print(f"kroner{ret-1}")
-        #for pl in markers:
-        cv.waitKey(0)
+        if deb:
+            cv.waitKey(0)
         return ret-1;
     return 0
 
 def poing(img):
-    print("poing")
     m_img = np.full((5, 5, 3), (255,255,255), dtype=np.uint8)
     ud = np.full((5, 5, 3), (255,255,120), dtype=np.uint8)
     for i in range(5):
@@ -95,16 +92,14 @@ def poing(img):
             li_img = img[(i*100):(i*100+100),(j*100):(j*100+100)]
             m_img[i,j,0] = brak_type(li_img)
             m_img[i,j,1] = antal_kroner(li_img)
-    #g = berging_poing(m_img)
-    #print(g)
-    print("------------")
     for i in range(5):
         for j in range(5):
             ud[i,j,0] = m_img[i,j,0]*10
-    print(f"---ping:{berging_poing(m_img)}")
+    print(f"---ping:{berging_poing(m_img)}---")
     m_img = cv.cvtColor(m_img, cv.COLOR_HSV2BGR)
     ud = cv.cvtColor(ud, cv.COLOR_HSV2BGR)
-    cv.imshow('lille',ud)
+    if deb:
+        cv.imshow('lille',ud)
 
 
 class cl_poing:
@@ -121,9 +116,6 @@ class cl_poing:
             return 0
         if(self.col == 0):
             return 0
-        #print(f"x:{self.x} y:{self.y}")
-        #print("{self.img[self.x,self.y,0]} != {self.col}:")
-        #print(f"{self.img[self.x,self.y,0]} != {self.col}:")
         if(self.img[self.x,self.y,0] != self.col):
             return 0
         tutal = 0
@@ -140,7 +132,6 @@ class cl_poing:
                 self.berging_poing()
                 self.x = tmp_x
                 self.y = tmp_y 
-
         return self.fel*self.kor
 
 def berging_poing(img):
@@ -167,7 +158,6 @@ def sum_xy(array, start, stop, x_len, y_len):
 
 teller = np.random.randint(0,high=74);
 while(1):
-
     sti = "king_domino_dataset/cropped_and_perspective_corrected_boards/"
     img = cv.imread(sti + str(teller+1) + ".jpg")
     cv.imshow("brat",img)

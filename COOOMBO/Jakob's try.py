@@ -1,12 +1,10 @@
 from collections import deque
 import numpy as np
 import cv2
-input = cv2.imread('picture/5.jpg')
+input = cv2.imread('picture/3.jpg')
 crown = cv2.imread('krone_master.png')
 mill = cv2.imread('molle1.png')
-where_crown = np.copy(input)
 where_crown_array = np.zeros([5, 5])
-#what_crown_land = [["blank","blank","blank","blank","blank"],["blank","blank","blank","blank","blank"],["blank","blank","blank","blank","blank"],["blank","blank","blank","blank","blank"],["blank","blank","blank","blank","blank"]]
 what_crown_land = np.zeros([5,5])
 
 def average(img, lower, upper):
@@ -76,16 +74,17 @@ def crop (image,temp_crown):
 def ignite_pixel(image, coordinate, id):
     y, x = coordinate
     burn_queue = deque()
-    a= 0
+    crown_count = 0
+    count_land_types = 0
+
     if image[y, x] < 10:
         burn_queue.append((y, x))
 
     while len(burn_queue) > 0:
         current_coordinate = burn_queue.pop()
         y, x = current_coordinate
+
         if image[y, x] < 10:
-
-
             if x + 1 < image.shape[1] and image[y, x + 1] == image[y, x]:
                 burn_queue.append((y, x + 1))
             if y + 1 < image.shape[0] and image[y + 1, x] == image[y, x]:
@@ -94,21 +93,14 @@ def ignite_pixel(image, coordinate, id):
                 burn_queue.append((y, x - 1))
             if y - 1 >= 0 and image[y - 1, x] == image[y, x]:
                 burn_queue.append((y - 1, x))
-            if where_crown_array[y, x] > 0:
-                a = where_crown_array[y,x] +a
-
-
-
-            print(a)
-            print(x,y)
-            print("......")
-            image[y, x] = id
-
+        count_land_types += 1
+        crown_count = where_crown_array[y, x] + crown_count
+        image[y, x] = id
         if len(burn_queue) == 0:
+            if crown_count*count_land_types > 0:
+                print(f" there is {count_land_types} tail of this type and {crown_count} crowns which is a total of {crown_count * count_land_types} points")
+                print("........")
             return id + 10
-        #print(".........")
-
-
     return id
 
 
@@ -119,15 +111,13 @@ def grassfire(image):
             next_id = ignite_pixel(image, (y, x), next_id)
 
 
-
 crop(input, crown)
 crop(input, mill)
-print("Count of crowns" )
+print("Count of crowns")
 print(where_crown_array)
 print ("Cronw's land")
 print(what_crown_land)
 grassfire(what_crown_land)
-#print(id)
 print(what_crown_land)
 cv2.imshow("input",input)
 cv2.waitKey(0)

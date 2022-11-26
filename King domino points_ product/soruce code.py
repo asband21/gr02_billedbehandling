@@ -6,7 +6,6 @@ crown = cv2.imread('krone_master.png')
 mill = cv2.imread('molle1.png')
 where_crown_array = np.zeros([5, 5])
 what_crown_land = np.zeros([5, 5])
-total_point = 0
 def average(img, lower, upper):
     threshold = cv2.inRange(img, lower, upper)
     return threshold.sum()/2560000
@@ -50,9 +49,9 @@ def environment(image):
 def match (img_crop,template):
     rotaion_array = [0, 0, 0, 0]
     for i in range(4):
-        rotaion_array[i] = cv2.matchTemplate(img_crop, template, cv2.TM_CCOEFF_NORMED)  #gets match
-        template = cv2.rotate(template, cv2.ROTATE_90_CLOCKWISE)# rotaions the template
-        rotaion_array[i] = cv2.inRange(rotaion_array[i], 0.62, 1)# theresdhold of the matchtemplate
+        rotaion_array[i] = cv2.matchTemplate(img_crop, template, cv2.TM_CCOEFF_NORMED)
+        template = cv2.rotate(template, cv2.ROTATE_90_CLOCKWISE)
+        rotaion_array[i] = cv2.inRange(rotaion_array[i], 0.62, 1)
     return rotaion_array
 
 def crop (image,temp_crown):
@@ -67,7 +66,6 @@ def crop (image,temp_crown):
                 if obj > 0:
                     where_crown_array[i, j] = obj
     return where_crown_array
-
 
 def ignite_pixel(image, coordinate, id, land_count, crown_count):
     y, x = coordinate
@@ -96,7 +94,6 @@ def ignite_pixel(image, coordinate, id, land_count, crown_count):
         if len(burn_queue) == 0:
             return id + 10, land_count, crown_count
     return id, land_count, crown_count
-
 def grassfire(image):
     next_id = 10
     points = 0

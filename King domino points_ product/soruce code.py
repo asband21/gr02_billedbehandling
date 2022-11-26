@@ -54,20 +54,19 @@ def match (img_crop,template):
         rotaion_array[i] = cv2.inRange(rotaion_array[i], 0.62, 1)
     return rotaion_array
 
-def crop (image,temp_crown):
+def crop (image, temp_crown):
     img = image.copy()
     for i in range(5):
         for j in range(5):
             crop = img[i*100:i*100+100, j*100:j*100+100]
-            for g in match(crop,temp_crown):
+            for g in match(crop, temp_crown):
                 obj, cod = cv2.connectedComponents(g)
                 obj = obj-1
-                what_crown_land[i,j] = environment(crop)
+                what_crown_land[i, j] = environment(crop)
                 if obj > 0:
                     where_crown_array[i, j] = obj
     return where_crown_array
-
-def ignite_pixel(image, coordinate, id, land_count, crown_count):
+def ignite_pixel(image, coordinate, id, crown_count, land_count):
     y, x = coordinate
     burn_queue = deque()
     if image[y, x] < 10:
@@ -76,11 +75,9 @@ def ignite_pixel(image, coordinate, id, land_count, crown_count):
     while len(burn_queue) > 0:
         current_coordinate = burn_queue.pop()
         y, x = current_coordinate
-
         if image[y, x] < 10:
-
-            land_count += where_crown_array[x,y]
-            crown_count = crown_count + 1
+            crown_count += where_crown_array[y, x]
+            land_count = land_count + 1
 
             if x + 1 < image.shape[1] and image[y, x + 1] == image[y, x]:
                 burn_queue.append((y, x + 1))
@@ -92,8 +89,8 @@ def ignite_pixel(image, coordinate, id, land_count, crown_count):
                 burn_queue.append((y - 1, x))
         image[y, x] = id
         if len(burn_queue) == 0:
-            return id + 10, land_count, crown_count
-    return id, land_count, crown_count
+            return id + 10, crown_count, land_count
+    return id, crown_count, land_count
 def grassfire(image):
     next_id = 10
     points = 0
@@ -101,11 +98,10 @@ def grassfire(image):
         for x, pixel in enumerate(row):
             land_count = 0
             crown_count = 0
-            next_id, land_count, crown_count = ignite_pixel(image, (y, x), next_id, land_count, crown_count)
+            next_id, crown_count, land_count = ignite_pixel(image, (y, x), next_id, crown_count, land_count)
             if crown_count> 0:
                 points += land_count*crown_count
     print(f"Total points of the game: {points}")
-
 crop(input, crown)
 crop(input, mill)
 print("...........")

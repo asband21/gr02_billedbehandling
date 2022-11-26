@@ -1,16 +1,15 @@
 from collections import deque
 import numpy as np
 import cv2
-input = cv2.imread('picture/3.jpg')
+input = cv2.imread('picture/7.jpg')
 crown = cv2.imread('krone_master.png')
 mill = cv2.imread('molle1.png')
 where_crown_array = np.zeros([5, 5])
-what_crown_land = np.zeros([5,5])
-
+what_crown_land = np.zeros([5, 5])
+total_point = 0
 def average(img, lower, upper):
     threshold = cv2.inRange(img, lower, upper)
     return threshold.sum()/2560000
-
 
 def environment(image):
     hsvImage = cv2.cvtColor(image, cv2.COLOR_BGR2HSV_FULL)
@@ -40,14 +39,13 @@ def environment(image):
 
 #cave
     avg = average(hsvImage, np.array([150, 0, 0]), np.array([255, 124, 78]))
-    if 0.10 < avg:
+    if 0.065 < avg:
         return 5
 
 #swamp
     avg = average(hsvImage, np.array([14, 0, 70]), np.array([39, 189, 165]))
     if 0.30 < avg:
         return 6
-
 
 def match (img_crop,template):
     rotaion_array = [0, 0, 0, 0]
@@ -71,12 +69,9 @@ def crop (image,temp_crown):
     return where_crown_array
 
 
-def ignite_pixel(image, coordinate, id):
+def ignite_pixel(image, coordinate, id, land_count, crown_count):
     y, x = coordinate
     burn_queue = deque()
-    crown_count = 0
-    count_land_types = 0
-
     if image[y, x] < 10:
         burn_queue.append((y, x))
 
@@ -85,6 +80,10 @@ def ignite_pixel(image, coordinate, id):
         y, x = current_coordinate
 
         if image[y, x] < 10:
+
+            land_count += where_crown_array[x,y]
+            crown_count = crown_count + 1
+
             if x + 1 < image.shape[1] and image[y, x + 1] == image[y, x]:
                 burn_queue.append((y, x + 1))
             if y + 1 < image.shape[0] and image[y + 1, x] == image[y, x]:
@@ -93,32 +92,28 @@ def ignite_pixel(image, coordinate, id):
                 burn_queue.append((y, x - 1))
             if y - 1 >= 0 and image[y - 1, x] == image[y, x]:
                 burn_queue.append((y - 1, x))
-        count_land_types += 1
-        crown_count = where_crown_array[y, x] + crown_count
         image[y, x] = id
         if len(burn_queue) == 0:
-            if crown_count*count_land_types > 0:
-                print(f" there is {count_land_types} tail of this type and {crown_count} crowns which is a total of {crown_count * count_land_types} points")
-                print("........")
-            return id + 10
-    return id
-
+            return id + 10, land_count, crown_count
+    return id, land_count, crown_count
 
 def grassfire(image):
     next_id = 10
+    points = 0
     for y, row in enumerate(image):
         for x, pixel in enumerate(row):
-            next_id = ignite_pixel(image, (y, x), next_id)
-
+            land_count = 0
+            crown_count = 0
+            next_id, land_count, crown_count = ignite_pixel(image, (y, x), next_id, land_count, crown_count)
+            if crown_count> 0:
+                points += land_count*crown_count
+    print(f"Total points of the game: {points}")
 
 crop(input, crown)
 crop(input, mill)
-print("Count of crowns")
-print(where_crown_array)
-print ("Cronw's land")
-print(what_crown_land)
+print("...........")
 grassfire(what_crown_land)
-print(what_crown_land)
+print("...........")
 cv2.imshow("input",input)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
